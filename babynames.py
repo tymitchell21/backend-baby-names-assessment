@@ -45,8 +45,18 @@ def extract_names(filename):
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    with open(filename, 'r') as file:
+        file_str = file.read()
+        year = re.search(r'Popularity\sin\s(\d\d\d\d)', file_str).group(1)
+        names = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', file_str)
+
+        baby_names = []
+
+        for tup in names:
+            baby_names.append(tup[1] + ' ' + tup[0])
+            baby_names.append(tup[2] + ' ' + tup[0])
+            
+    return [year, baby_names]
 
 
 def create_parser():
@@ -76,6 +86,18 @@ def main():
     # +++your code here+++
     # For each filename, get the names, then either print the text output
     # or write it to a summary file
+    for file in file_list:
+        baby_names_info = extract_names(file)
+        names = baby_names_info[1]
+        year = baby_names_info[0]
+        text = '\n'.join(sorted(names)) + '\n'
+
+        if create_summary:
+            with open(file + '.summary', 'w') as f:
+                f.write(year + '\n' + text)
+        else:
+            print(year)
+            print(text)
 
 
 if __name__ == '__main__':
